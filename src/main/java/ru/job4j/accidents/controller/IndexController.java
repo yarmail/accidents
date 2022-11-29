@@ -3,6 +3,7 @@ package ru.job4j.accidents.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import ru.job4j.accidents.service.AccidentService;
 
 /**
  * Метод index принимает объект Model. Объект модель
@@ -12,10 +13,16 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class IndexController {
+    private final AccidentService accidentService;
+
+    public IndexController(AccidentService accidentService) {
+        this.accidentService = accidentService;
+    }
 
     @GetMapping("/")
     public String index(Model model) {
-        model.addAttribute("user", "name1");
+        model.addAttribute("user", "User1");
+        model.addAttribute("accidents", accidentService.findAll());
         return "index";
     }
 }
