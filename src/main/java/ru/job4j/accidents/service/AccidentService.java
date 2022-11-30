@@ -24,4 +24,8 @@ public class AccidentService {
     public void replace(Accident accident) {
         accidentMem.replace(accident);
     }
+
+    public Accident findById(int id) {
+        return accidentMem.findById(id);
+    }
 }

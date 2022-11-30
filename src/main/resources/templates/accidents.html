@@ -17,11 +17,16 @@
             </tr>
         </thead>
         <tbody>
-            <tr th:each="acc:${accidents}">
-                <th scope="row" th:text="${acc.id}"></th>
-                <td th:text="${acc.name}"></td>
-                <td th:text="${acc.text}"></td>
-                <td th:text="${acc.address}"></td>
+            <tr th:each="accident:${accidents}">
+                <td th:text="${accident.id}"></td>
+                <td>
+                    <a th:href="@{|/formUpdateAccident?id=${accident.id}|}">
+                        <i class="fa fa-pencil-square-o"></i>
+                    </a>
+                        <span th:text="${accident.name}"></span>
+                </td>
+                <td th:text="${accident.text}"></td>
+                <td th:text="${accident.address}"></td>
             </tr>
         </tbody>
     </table>
