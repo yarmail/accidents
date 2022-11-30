@@ -12,7 +12,6 @@ import java.util.HashMap;
  * Работа с базой будет дальше.
  */
 @Repository
-@Scope("singleton")
 public class AccidentMem {
     private final HashMap<Integer, Accident> accidents = new HashMap<>();
 
