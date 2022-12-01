@@ -13,9 +13,8 @@
                 Изменить Происшествие
             </div>
             <div class="card-body">
-                <form th:action="@{/updateAccident}" method="POST" enctype="multipart/form-data" th:object="${accident}">
+                <form th:action="@{/updateAccident}" method="POST" th:object="${accident}">
                     <input type="hidden" name="id" th:field="*{id}"/>
-                    <input type="hidden" name="id" value="0"/>
                     <div class="form-group">
                         <label for="name">Название Происшествия</label>
                         <input type="text" class="form-control" name="name" id="name" th:field="*{name}" required>
@@ -27,6 +26,16 @@
                     <div class="form-group">
                         <label for="address">Адрес Происшествия</label>
                         <input type="text" class="form-control" name="address" id="address" th:field="*{address}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type.id">Тип происшествия</label>
+                        <select class="form-control" id="type.id" name="type.id">
+                            <option
+                                th:each="type: ${types}"
+                                th:text="${type.name}"
+                                th:value="${type.id}">
+                            </option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
                 </form>

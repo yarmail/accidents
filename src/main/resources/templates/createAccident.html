@@ -13,19 +13,29 @@
                 Новый инцидент
             </div>
             <div class="card-body">
-                <form th:action="@{/saveAccident}" method="POST" enctype="multipart/form-data">
+                <form th:action="@{/saveAccident}" method="POST">
                     <input type="hidden" name="id" value="0"/>
                     <div class="form-group">
                         <label for="name">Название Инцидента</label>
                         <input type="text" class="form-control" name="name" id="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="text">Описания</label>
+                        <label for="text">Описание происшествия</label>
                         <input type="text" class="form-control" name="text" id="text" required>
                     </div>
                     <div class="form-group">
                         <label for="address">Адресс</label>
                         <input type="text" class="form-control" name="address" id="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="type.id">Тип происшествия</label>
+                        <select class="form-control" id="type.id" name="type.id">
+                            <option
+                                    th:each="type: ${types}"
+                                    th:text="${type.name}"
+                                    th:value="${type.id}">
+                            </option>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
                 </form>
@@ -35,3 +45,7 @@
 </div>
 </body>
 </html>
+<!-- Примечание
+Spring MVС видит параметр в запрос type.id и преобразует
+его в объект type с загруженным полем id.
+-->

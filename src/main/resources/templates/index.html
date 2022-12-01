@@ -7,24 +7,6 @@
 <body>
 <div class="container">
     <th:block th:include="blocks/nav :: div" />
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">Имя</th>
-                <th scope="col">Описание</th>
-                <th scope="col">Адрес</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="acc:${accidents}">
-                <th scope="row" th:text="${acc.id}"></th>
-                <td th:text="${acc.name}"></td>
-                <td th:text="${acc.text}"></td>
-                <td th:text="${acc.address}"></td>
-            </tr>
-        </tbody>
-    </table>
 </div>
 </body>
 </html>
