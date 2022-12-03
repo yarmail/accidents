@@ -37,6 +37,15 @@
                             </option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="rIds">Статья</label>
+                        <select class="form-control" id="rIds" name="rIds" multiple>
+                            <option th:each="rule: ${rules}"
+                                    th:text="${rule.name}"
+                                    th:value="${rule.id}">
+                            </option>
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-primary mt-3">Сохранить</button>
                 </form>
             </div>
@@ -45,7 +54,18 @@
 </div>
 </body>
 </html>
-<!-- Примечание
+<!-- Примечания
+
+Form с композиционным объектом "Тип происшествия"
 Spring MVС видит параметр в запрос type.id и преобразует
 его в объект type с загруженным полем id.
+th:value="${type.id}
+
+Form с агрегационными объектами "Статья"
+В форме указывается имя элемента select как rIds,
+а не как имя поля модели Accident - rules.
+Это связано с тем, что Spring MVC не может связать
+список объектов с полем.
+Данные на контроллере мы получаем напрямую
+из запроса HttpRequestServlet.
 -->

@@ -15,6 +15,7 @@
                 <th scope="col">Описание происшествия</th>
                 <th scope="col">Адрес происшествия</th>
                 <th scope="col">Тип происшествия</th>
+                <th scope="col">Статьи</th>
             </tr>
         </thead>
         <tbody>
@@ -29,6 +30,10 @@
                 <td th:text="${accident.text}"></td>
                 <td th:text="${accident.address}"></td>
                 <td th:text="${accident.type.name}"></td>
+                <td>
+                    <span th:each="rule,iterStat : ${accident.rules}"
+                          th:text="${rule.name} + ${!iterStat.last ? ', ' : ''}"></span>
+                </td>
             </tr>
         </tbody>
     </table>
