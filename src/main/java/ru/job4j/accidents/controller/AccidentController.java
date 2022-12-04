@@ -4,10 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
-import java.util.Set;
 import ru.job4j.accidents.model.Accident;
-import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.service.AccidentService;
 import ru.job4j.accidents.service.AccidentTypeService;
 import ru.job4j.accidents.service.RuleService;
@@ -26,7 +23,7 @@ public class AccidentController {
         this.ruleService = ruleService;
     }
 
-    @GetMapping("/accidents")
+    @GetMapping("/")
     public String accidents(Model model) {
         model.addAttribute("accidents", accidentService.findAll());
         return "accidents";
@@ -40,21 +37,18 @@ public class AccidentController {
     }
 
     /**
-     * @RequestParam - эта аннотация позволяет получить параметр из строки запроса.
+     * @RequestParam - эта аннотация позволяет
+     * получить параметр из строки запроса.
+     * из request берем список статей rIds - rule id's
+     * typeId - id типа происшествия
      */
     @PostMapping("/saveAccident")
-    public String save(@ModelAttribute Accident accident,
-                       @RequestParam("type.id") int id,
+    public String add(@ModelAttribute Accident accident,
+                       @RequestParam("type.id") int typeId,
                        HttpServletRequest request) {
-        String[] ids = request.getParameterValues("rIds");
-        Set<Rule> rules = new HashSet<>();
-        for (String statId : ids) {
-            rules.add(ruleService.findById(Integer.parseInt(statId)));
-        }
-        accident.setRules(rules);
-        accident.setType(accidentTypeService.findById(id));
-        accidentService.add(accident);
-        return "redirect:/accidents";
+        String[] rIds = request.getParameterValues("rIds");
+        accidentService.add(accident, rIds, typeId);
+        return "redirect:/";
     }
 
     @GetMapping("/formUpdateAccident")
@@ -65,18 +59,16 @@ public class AccidentController {
         return "editAccident";
     }
 
+    /**
+     * из request берем список статей rIds - rule id's
+     * typeId - id типа происшествия
+     */
     @PostMapping("/updateAccident")
-    public String update(@ModelAttribute Accident accident,
-                         @RequestParam("type.id") int id,
+    public String replace(@ModelAttribute Accident accident,
+                         @RequestParam("type.id") int typeId,
                          HttpServletRequest request) {
-        String[] ids = request.getParameterValues("rIds");
-        Set<Rule> rules = new HashSet<>();
-        for (String statId : ids) {
-            rules.add(ruleService.findById(Integer.parseInt(statId)));
-        }
-        accident.setRules(rules);
-        accident.setType(accidentTypeService.findById(id));
-        accidentService.replace(accident);
-        return "redirect:/accidents";
+        String[] rIds = request.getParameterValues("rIds");
+        accidentService.replace(accident, rIds, typeId);
+        return "redirect:/";
     }
 }

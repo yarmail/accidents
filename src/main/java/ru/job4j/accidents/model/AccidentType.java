@@ -6,7 +6,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * Тип происшествия
+ * Тип происшествия, например
+ * Две машины
+ * Машина и человек
+ * Машина и велосипед
  */
 @Data
 @AllArgsConstructor

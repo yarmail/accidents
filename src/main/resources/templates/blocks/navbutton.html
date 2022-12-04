@@ -16,14 +16,7 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-item nav-link" th:href="@{/}" >На Главную</a>
-                <div class="btn-group">
-                    <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                        Происшествия
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" th:href="@{/addAccident}">Добавить Происшествие</a></li>
-                    </ul>
-                </div>
+                <a class="nav-item nav-link" th:href="@{/addAccident}">Добавить Происшествие</a>
             </div>
         </div>
     </nav>
