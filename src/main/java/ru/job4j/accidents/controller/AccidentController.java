@@ -47,6 +47,9 @@ public class AccidentController {
                        @RequestParam("type.id") int typeId,
                        HttpServletRequest request) {
         String[] rIds = request.getParameterValues("rIds");
+        if ((accidentTypeService.findById(typeId) == null) || (rIds == null)) {
+            return "error";
+        }
         accidentService.add(accident, rIds, typeId);
         return "redirect:/";
     }
@@ -68,6 +71,9 @@ public class AccidentController {
                          @RequestParam("type.id") int typeId,
                          HttpServletRequest request) {
         String[] rIds = request.getParameterValues("rIds");
+        if ((accidentTypeService.findById(typeId) == null) || (rIds == null)) {
+            return "error";
+        }
         accidentService.replace(accident, rIds, typeId);
         return "redirect:/";
     }
