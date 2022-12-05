@@ -1,27 +1,22 @@
 package ru.job4j.accidents.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
+import ru.job4j.accidents.repository.AccidentJdbcTemplate;
 import ru.job4j.accidents.repository.AccidentMem;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 @Service
+@AllArgsConstructor
 public class AccidentService {
-    private final AccidentMem accidentMem;
+    private final AccidentJdbcTemplate accidentRepository;
     private final RuleService ruleService;
     private final AccidentTypeService accidentTypeService;
-
-    public AccidentService(AccidentMem accidentMem,
-                           RuleService ruleService,
-                           AccidentTypeService accidentTypeService) {
-        this.accidentMem = accidentMem;
-        this.ruleService = ruleService;
-        this.accidentTypeService = accidentTypeService;
-    }
 
     /**
      * проверка на плохие значения
@@ -62,18 +57,18 @@ public class AccidentService {
     }
 
     public void add(Accident accident) {
-        accidentMem.add(accident);
+        accidentRepository.add(accident);
     }
 
     public Collection<Accident> findAll() {
-        return accidentMem.findAll();
+        return accidentRepository.findAll();
     }
 
     public void replace(Accident accident) {
-        accidentMem.replace(accident);
+        accidentRepository.replace(accident);
     }
 
     public Accident findById(int id) {
-        return accidentMem.findById(id);
+        return accidentRepository.findById(id);
     }
 }
