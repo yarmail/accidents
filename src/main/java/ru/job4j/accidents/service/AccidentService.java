@@ -2,6 +2,7 @@ package ru.job4j.accidents.service;
 
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
+import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.repository.AccidentMem;
 import java.util.Collection;
@@ -22,35 +23,53 @@ public class AccidentService {
         this.accidentTypeService = accidentTypeService;
     }
 
+    /**
+     * проверка на плохие значения
+     * rIds - список статей
+     * typeId - id типа происшествия
+     * operation - тип дальнейшей операции
+     */
+    public boolean checkValue(Accident accident, String[] rIds,
+                              int typeId, String operation) {
+        boolean result = false;
+        AccidentType accidentType = accidentTypeService.findById(typeId);
+        if ((accidentType != null) || (rIds != null)) {
+            completeAccident(accident, rIds, accidentType, operation);
+            result = true;
+        }
+        return result;
+    }
+
+    /**
+     * Комплектуем Accident дополнениями и сохраняем
+     * rIds - статьи, accidentType - тип происшествия
+     *
+     */
+    private void completeAccident(Accident accident, String[] rIds,
+                                  AccidentType accidentType, String operation) {
+        Set<Rule> rules = new HashSet<>();
+        for (String statId : rIds) {
+            rules.add(ruleService.findById(Integer.parseInt(statId)));
+        }
+        accident.setRules(rules);
+        accident.setType(accidentType);
+        if (operation.equals("add")) {
+            add(accident);
+        }
+        if (operation.equals("replace")) {
+            replace(accident);
+        }
+    }
+
+    public void add(Accident accident) {
+        accidentMem.add(accident);
+    }
+
     public Collection<Accident> findAll() {
         return accidentMem.findAll();
     }
 
-    /**
-     * rIds - список статей
-     * typeId - id типа происшествия
-     */
-    public void add(Accident accident, String[] rIds, int typeId) {
-        Set<Rule> rules = new HashSet<>();
-        for (String statId : rIds) {
-            rules.add(ruleService.findById(Integer.parseInt(statId)));
-        }
-        accident.setRules(rules);
-        accident.setType(accidentTypeService.findById(typeId));
-        accidentMem.add(accident);
-    }
-
-    /**
-     * rIds - список статей
-     * typeId - id типа происшествия
-     */
-    public void replace(Accident accident, String[] rIds, int typeId) {
-        Set<Rule> rules = new HashSet<>();
-        for (String statId : rIds) {
-            rules.add(ruleService.findById(Integer.parseInt(statId)));
-        }
-        accident.setRules(rules);
-        accident.setType(accidentTypeService.findById(typeId));
+    public void replace(Accident accident) {
         accidentMem.replace(accident);
     }
 
