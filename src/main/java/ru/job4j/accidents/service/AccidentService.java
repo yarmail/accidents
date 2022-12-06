@@ -6,7 +6,6 @@ import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.repository.AccidentJdbcTemplate;
-import ru.job4j.accidents.repository.AccidentMem;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,56 +18,44 @@ public class AccidentService {
     private final AccidentTypeService accidentTypeService;
 
     /**
-     * проверка на плохие значения
      * rIds - список статей
      * typeId - id типа происшествия
-     * operation - тип дальнейшей операции
      */
-    public boolean checkValue(Accident accident, String[] rIds,
-                              int typeId, String operation) {
-        boolean result = false;
+    public boolean save(Accident accident, String[] rIds, int typeId) {
         AccidentType accidentType = accidentTypeService.findById(typeId);
-        if ((accidentType != null) || (rIds != null)) {
-            completeAccident(accident, rIds, accidentType, operation);
-            result = true;
+        if ((accidentType == null) || (rIds == null)) {
+            return false;
         }
-        return result;
-    }
-
-    /**
-     * Комплектуем Accident дополнениями и сохраняем
-     * rIds - статьи, accidentType - тип происшествия
-     *
-     */
-    private void completeAccident(Accident accident, String[] rIds,
-                                  AccidentType accidentType, String operation) {
         Set<Rule> rules = new HashSet<>();
         for (String statId : rIds) {
             rules.add(ruleService.findById(Integer.parseInt(statId)));
         }
         accident.setRules(rules);
         accident.setType(accidentType);
-        if (operation.equals("add")) {
-            add(accident);
+        accidentRepository.save(accident);
+        return true;
+    }
+
+    public boolean replace(Accident accident, String[] rIds, int typeId) {
+        AccidentType accidentType = accidentTypeService.findById(typeId);
+        if ((accidentType == null) || (rIds == null)) {
+            return false;
         }
-        if (operation.equals("replace")) {
-            replace(accident);
+        Set<Rule> rules = new HashSet<>();
+        for (String statId : rIds) {
+            rules.add(ruleService.findById(Integer.parseInt(statId)));
         }
-    }
-
-    public void add(Accident accident) {
-        accidentRepository.add(accident);
-    }
-
-    public Collection<Accident> findAll() {
-        return accidentRepository.findAll();
-    }
-
-    public void replace(Accident accident) {
+        accident.setRules(rules);
+        accident.setType(accidentType);
         accidentRepository.replace(accident);
+        return true;
     }
 
     public Accident findById(int id) {
         return accidentRepository.findById(id);
+    }
+
+    public Collection<Accident> findAll() {
+        return accidentRepository.findAll();
     }
 }

@@ -43,11 +43,11 @@ public class AccidentController {
      * typeId - id типа происшествия
      */
     @PostMapping("/saveAccident")
-    public String add(@ModelAttribute Accident accident,
+    public String save(@ModelAttribute Accident accident,
                        @RequestParam("type.id") int typeId,
                        HttpServletRequest request) {
         String[] rIds = request.getParameterValues("rIds");
-        if (!accidentService.checkValue(accident, rIds, typeId, "add")) {
+        if (!accidentService.save(accident, rIds, typeId)) {
             return "error";
         }
         return "redirect:/";
@@ -70,7 +70,7 @@ public class AccidentController {
                          @RequestParam("type.id") int typeId,
                          HttpServletRequest request) {
         String[] rIds = request.getParameterValues("rIds");
-        if (!accidentService.checkValue(accident, rIds, typeId, "replace")) {
+        if (!accidentService.replace(accident, rIds, typeId)) {
             return "error";
         }
         return "redirect:/";

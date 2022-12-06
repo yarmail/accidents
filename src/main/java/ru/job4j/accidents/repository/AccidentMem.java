@@ -43,7 +43,7 @@ public class AccidentMem {
         return accidents.get(id);
     }
 
-    public void add(Accident accident) {
+    public void save(Accident accident) {
         accident.setId(id.incrementAndGet());
         accidents.putIfAbsent(accident.getId(), accident);
     }

@@ -14,7 +14,7 @@ public class AccidentJdbcTemplate {
     private final JdbcTemplate jdbc;
     private final AccidentTypeService typeService;
 
-    public void add(Accident accident) {
+    public void save(Accident accident) {
         jdbc.update("insert into accident (name, text, address, type_id) "
                          + "values(?, ?, ?, ?)",
                 accident.getName(),
