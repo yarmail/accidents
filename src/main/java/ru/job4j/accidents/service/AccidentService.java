@@ -23,7 +23,7 @@ public class AccidentService {
      */
     public boolean save(Accident accident, String[] rIds, int typeId) {
         AccidentType accidentType = accidentTypeService.findById(typeId);
-        if ((accidentType == null) || (rIds == null)) {
+        if (accidentType == null) {
             return false;
         }
         Set<Rule> rules = new HashSet<>();
@@ -38,7 +38,7 @@ public class AccidentService {
 
     public boolean replace(Accident accident, String[] rIds, int typeId) {
         AccidentType accidentType = accidentTypeService.findById(typeId);
-        if ((accidentType == null) || (rIds == null)) {
+        if (accidentType == null) {
             return false;
         }
         Set<Rule> rules = new HashSet<>();
