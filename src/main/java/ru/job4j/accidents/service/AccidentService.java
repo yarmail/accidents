@@ -28,7 +28,11 @@ public class AccidentService {
         }
         Set<Rule> rules = new HashSet<>();
         for (String statId : rIds) {
-            rules.add(ruleService.findById(Integer.parseInt(statId)));
+            Rule rule = ruleService.findById(Integer.parseInt(statId));
+            if (rule == null) {
+                return false;
+            }
+            rules.add(rule);
         }
         accident.setRules(rules);
         accident.setType(accidentType);
@@ -43,7 +47,11 @@ public class AccidentService {
         }
         Set<Rule> rules = new HashSet<>();
         for (String statId : rIds) {
-            rules.add(ruleService.findById(Integer.parseInt(statId)));
+            Rule rule = ruleService.findById(Integer.parseInt(statId));
+            if (rule == null) {
+                return false;
+            }
+            rules.add(rule);
         }
         accident.setRules(rules);
         accident.setType(accidentType);
