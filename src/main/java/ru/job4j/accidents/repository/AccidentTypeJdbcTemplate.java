@@ -13,12 +13,12 @@ public class AccidentTypeJdbcTemplate {
     private final JdbcTemplate jdbc;
 
     public List<AccidentType> findAll() {
-        return jdbc.query("select * from acc_type",
+        return jdbc.query("select * from type",
                 new BeanPropertyRowMapper<>(AccidentType.class));
     }
 
     public AccidentType findById(int id) {
-        return jdbc.queryForObject("select * from acc_type where id = ?",
+        return jdbc.queryForObject("select * from type where type_id = ?",
                 new BeanPropertyRowMapper<>(AccidentType.class), id);
     }
 }

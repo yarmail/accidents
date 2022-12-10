@@ -1,4 +1,5 @@
 create table if not exists rule(
-    id serial primary key,
-    name varchar
-)
+    rule_id serial primary key,
+    rule_name varchar
+);
+comment on table rule is 'Статьи, правила';

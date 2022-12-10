@@ -16,9 +16,9 @@ public class RuleJdbcTemplate {
     private final DataSource dataSource;
 
     private static final String RULES_BY_ACCIDENT =
-            "select r.id, r.name from accident_rule a "
-                    + "join rule r on r.id = a.rule_id where accident_id = ?";
-    private static final String RULE_BY_ID = "select * from rule where id = ?";
+            "select r.rule_id, r.rule_name from accident_rule a "
+                    + "join rule r on r.rule_id = a.rule_id where accident_id = ?";
+    private static final String RULE_BY_ID = "select * from rule where rule_id = ?";
     private static final String ALL_RULES = "select * from rule";
 
     public List<Rule> findAll() {

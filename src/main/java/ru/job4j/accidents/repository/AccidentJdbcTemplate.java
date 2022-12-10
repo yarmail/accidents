@@ -1,36 +1,39 @@
 package ru.job4j.accidents.repository;
 
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
+import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.service.AccidentTypeService;
 
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Repository
 @AllArgsConstructor
 public class AccidentJdbcTemplate {
     private final JdbcTemplate jdbc;
     private final DataSource dataSource;
-    private final AccidentTypeService typeService;
     private final RuleJdbcTemplate ruleJdbcTemplate;
 
-    private static final String ALL_ACCIDENTS =
-            "select distinct a.id, a.name, a.text, a.address, a.type_id, a_t.name "
-                    + "from accident a join acc_type a_t ON a.type_id = a_t.id";
-    private static final String ACCIDENT_BY_ID = "SELECT * FROM accident WHERE id = ?";
+    private static final String ALL_ACCIDENTS = """ 
+                     select a.*, t.*, ar.*, r.*
+                     from accident a join type t on a.accident_type_id = t.type_id
+                     join accident_rule ar on a.accident_id = ar.accident_id
+                     join rule r on ar.rule_id = r.rule_id
+                     """;
+    private static final String ACCIDENT_BY_ID = "SELECT * FROM accident WHERE accident_id = ?";
     private static final String UPDATE_ACCIDENT =
-            "UPDATE accident SET name = ?, text = ?, address = ?, type_id = ? WHERE id = ?";
+            "UPDATE accident SET accident_name = ?, accident_text = ?, accident_address = ?, accident_type_id = ? WHERE accident_id = ?";
     private static final String DELETE_ACCIDENTS_RULES_BY_ACCIDENT
             = "DELETE FROM accident_rule WHERE accident_id = ?";
 
@@ -50,7 +53,7 @@ public class AccidentJdbcTemplate {
     }
 
     public List<Accident> findAll() {
-        return jdbc.query(ALL_ACCIDENTS, new AccidentMapper());
+        return jdbc.query(ALL_ACCIDENTS, new AccidentExtractor());
     }
 
     public Accident findById(int id) {
@@ -69,39 +72,34 @@ public class AccidentJdbcTemplate {
         ruleJdbcTemplate.addAccidentId(accident.getRules(), accident.getId());
     }
 
-    private class AccidentMapper implements RowMapper<Accident> {
-        private int id = -1;
+    private class AccidentExtractor implements ResultSetExtractor<List<Accident>> {
 
-        public AccidentMapper() {
-        }
-
-        public AccidentMapper(int id) {
-            this.id = id;
-        }
-
-        /**
-         * Заполняем Accident из таблицы
-         * Если я правильно понимаю такой запрос
-         * нужно делать к объедененной таблице
-         */
         @Override
-        public Accident mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Accident accident = new Accident();
-            if (id == -1) {
-                accident.setId(rs.getInt("id"));
-            } else {
-                accident.setId(id);
-            }
-            accident.setName(rs.getString("name"));
-            accident.setText(rs.getString("text"));
-            accident.setAddress(rs.getString("address"));
+        public List<Accident> extractData(ResultSet rs) throws SQLException, DataAccessException {
+           List<Accident> accidentList = new ArrayList<>();
 
-            AccidentType accidentType = new AccidentType();
-            accidentType.setId(rs.getInt("type_id"));
-            accidentType.setName(rs.getString("name"));
-            accident.setType(accidentType);
-            accident.setRules(ruleJdbcTemplate.findRulesByAccident(accident.getId()));
-            return accident;
+           while (rs.next()) {
+               Accident accident = new Accident();
+               accident.setId(rs.getInt("accident_id"));
+               accident.setName(rs.getString("accident_name"));
+               accident.setText(rs.getString("accident_text"));
+               accident.setAddress(rs.getString("accident_address"));
+
+               AccidentType accidentType = new AccidentType();
+               accidentType.setId(rs.getInt("type_id"));
+               accidentType.setName(rs.getString("type_name"));
+               accident.setType(accidentType);
+
+               Rule rule = new Rule();
+               rule.setId(rs.getInt("r.rule_id"));
+               rule.setName(rs.getString("rule_name"));
+               Set<Rule> rules = new HashSet<>();
+               rules.add(rule);
+               accident.setRules(rules);
+
+               accidentList.add(accident);
+           }
+           return accidentList;
         }
     }
 }
