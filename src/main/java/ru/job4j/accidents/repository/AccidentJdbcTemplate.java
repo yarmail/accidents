@@ -22,17 +22,17 @@ public class AccidentJdbcTemplate {
     private final RuleJdbcTemplate ruleJdbcTemplate;
 
     private static final String ALL_ACCIDENTS = """
-        select *
-        from accident a join type t on a.accident_type_id = t.type_id
-        join accident_rule ar on a.accident_id = ar.accident_id
-        join rule r on ar.rule_id = r.rule_id
+        SELECT *
+        FROM accident a JOIN type t ON a.accident_type_id = t.type_id
+        JOIN accident_rule ar ON a.accident_id = ar.accident_id
+        JOIN rule r ON ar.rule_id = r.rule_id
     """;
     private static final String ACCIDENT_BY_ID = """
-        select *
-        from accident a join type t on a.accident_type_id = t.type_id
-        join accident_rule ar on a.accident_id = ar.accident_id
-        join rule r on ar.rule_id = r.rule_id
-        where a.accident_id = ?
+        SELECT *
+        FROM accident a JOIN type t ON a.accident_type_id = t.type_id
+        JOIN accident_rule ar ON a.accident_id = ar.accident_id
+        JOIN rule r ON ar.rule_id = r.rule_id
+        WHERE a.accident_id = ?
     """;
     private static final String UPDATE_ACCIDENT =
             "UPDATE accident SET accident_name = ?, accident_text = ?, accident_address = ?, "
