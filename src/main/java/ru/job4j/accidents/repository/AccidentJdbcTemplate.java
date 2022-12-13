@@ -2,17 +2,13 @@ package ru.job4j.accidents.repository;
 
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
-import ru.job4j.accidents.service.AccidentTypeService;
-
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,17 +21,24 @@ public class AccidentJdbcTemplate {
     private final DataSource dataSource;
     private final RuleJdbcTemplate ruleJdbcTemplate;
 
-    private static final String ALL_ACCIDENTS = """ 
-                     select a.*, t.*, ar.*, r.*
-                     from accident a join type t on a.accident_type_id = t.type_id
-                     join accident_rule ar on a.accident_id = ar.accident_id
-                     join rule r on ar.rule_id = r.rule_id
-                     """;
-    private static final String ACCIDENT_BY_ID = "SELECT * FROM accident WHERE accident_id = ?";
+    private static final String ALL_ACCIDENTS = """
+        select *
+        from accident a join type t on a.accident_type_id = t.type_id
+        join accident_rule ar on a.accident_id = ar.accident_id
+        join rule r on ar.rule_id = r.rule_id
+    """;
+    private static final String ACCIDENT_BY_ID = """
+        select *
+        from accident a join type t on a.accident_type_id = t.type_id
+        join accident_rule ar on a.accident_id = ar.accident_id
+        join rule r on ar.rule_id = r.rule_id
+        where a.accident_id = ?
+    """;
     private static final String UPDATE_ACCIDENT =
-            "UPDATE accident SET accident_name = ?, accident_text = ?, accident_address = ?, accident_type_id = ? WHERE accident_id = ?";
-    private static final String DELETE_ACCIDENTS_RULES_BY_ACCIDENT
-            = "DELETE FROM accident_rule WHERE accident_id = ?";
+            "UPDATE accident SET accident_name = ?, accident_text = ?, accident_address = ?, "
+                    + "accident_type_id = ? WHERE accident_id = ?";
+    private static final String DELETE_ACCIDENTS_RULES_BY_ACCIDENT =
+            "DELETE FROM accident_rule WHERE accident_id = ?";
 
     public Accident save(Accident accident) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
@@ -53,13 +56,15 @@ public class AccidentJdbcTemplate {
     }
 
     public List<Accident> findAll() {
-        return jdbc.query(ALL_ACCIDENTS, new AccidentExtractor());
+        Collection<Accident> accidents =
+                jdbc.query(ALL_ACCIDENTS, new AccidentExtractor()).values();
+        return accidents.size() > 0 ? new ArrayList<>(accidents) : new ArrayList<>();
     }
 
     public Accident findById(int id) {
-        return jdbc.queryForObject(ACCIDENT_BY_ID,
-                new BeanPropertyRowMapper<>(Accident.class), id);
-    }
+        return jdbc.query(ACCIDENT_BY_ID, new AccidentExtractor(), id)
+                        .values().stream().findFirst().get();
+        }
 
     public void replace(Accident accident) {
         jdbc.update(UPDATE_ACCIDENT,
@@ -72,34 +77,79 @@ public class AccidentJdbcTemplate {
         ruleJdbcTemplate.addAccidentId(accident.getRules(), accident.getId());
     }
 
-    private class AccidentExtractor implements ResultSetExtractor<List<Accident>> {
+    private class AccidentExtractor implements ResultSetExtractor<Map<Integer, Accident>> {
+        Map<Integer, Accident> result = new HashMap<>();
 
         @Override
-        public List<Accident> extractData(ResultSet rs) throws SQLException, DataAccessException {
-           List<Accident> accidentList = new ArrayList<>();
+        public Map<Integer, Accident> extractData(ResultSet rs) throws SQLException, DataAccessException {
+            while (rs.next()) {
+                int accidentId = rs.getInt("accident_id");
+                Accident accident = new Accident();
+                accident.setId(accidentId);
+                accident.setName(rs.getString("accident_name"));
+                accident.setText(rs.getString("accident_text"));
+                accident.setAddress(rs.getString("accident_address"));
 
-           while (rs.next()) {
-               Accident accident = new Accident();
-               accident.setId(rs.getInt("accident_id"));
-               accident.setName(rs.getString("accident_name"));
-               accident.setText(rs.getString("accident_text"));
-               accident.setAddress(rs.getString("accident_address"));
+                AccidentType accidentType = new AccidentType();
+                accidentType.setId(rs.getInt("type_id"));
+                accidentType.setName(rs.getString("type_name"));
+                accident.setType(accidentType);
 
-               AccidentType accidentType = new AccidentType();
-               accidentType.setId(rs.getInt("type_id"));
-               accidentType.setName(rs.getString("type_name"));
-               accident.setType(accidentType);
+                Set<Rule> rules = new HashSet<>();
+                accident.setRules(rules);
 
-               Rule rule = new Rule();
-               rule.setId(rs.getInt("r.rule_id"));
-               rule.setName(rs.getString("rule_name"));
-               Set<Rule> rules = new HashSet<>();
-               rules.add(rule);
-               accident.setRules(rules);
+                result.putIfAbsent(accidentId, accident);
 
-               accidentList.add(accident);
-           }
-           return accidentList;
+                Rule rule = new Rule();
+                rule.setId(rs.getInt("rule_id"));
+                rule.setName(rs.getString("rule_name"));
+
+                result.get(accidentId).getRules().add(rule);
+            }
+            return result;
         }
     }
 }
+/* Альтернативные варианты от Станислава
+
+    private final ResultSetExtractor<Map<Integer, Accident>> extractor = (rs) -> {
+        Map<Integer, Accident> result = new HashMap<>();
+        while (rs.next()) {
+            Accident accident = Accident.of(
+                    rs.getString("name"),
+                    rs.getString("text"),
+                    rs.getString("address"),
+                    AccidentType.of(
+                            rs.getInt("type_id"),
+                            rs.getString("t_name")
+                    ),
+                    new HashSet<>()
+            );
+            accident.setId(rs.getInt("id"));
+            result.putIfAbsent(accident.getId(), accident);
+            result.get(accident.getId()).addRule(
+                    Rule.of(
+                            rs.getInt("r_id"),
+                            rs.getString("r_name")
+                    )
+            );
+        }
+        return result;
+    };
+ */
+/*
+    private final RowMapper<Accident> accidentRowMapper = ((rs, i) -> {
+        Accident accident = Accident.of(
+                rs.getString("name"),
+                rs.getString("text"),
+                rs.getString("address"),
+                AccidentType.of(
+                        rs.getInt("type_id"),
+                        rs.getString("t_name")
+                ),
+                new HashSet<>()
+        );
+        accident.setId(rs.getInt("id"));
+        return accident;
+    });
+ */
