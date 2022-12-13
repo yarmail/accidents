@@ -8,6 +8,7 @@ import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.repository.AccidentJdbcTemplate;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -22,44 +23,44 @@ public class AccidentService {
      * typeId - id типа происшествия
      */
     public boolean save(Accident accident, String[] rIds, int typeId) {
-        AccidentType accidentType = accidentTypeService.findById(typeId);
-        if (accidentType == null) {
+        Optional<AccidentType> accidentType = accidentTypeService.findById(typeId);
+        if (accidentType.isEmpty()) {
             return false;
         }
         Set<Rule> rules = new HashSet<>();
         for (String statId : rIds) {
-            Rule rule = ruleService.findById(Integer.parseInt(statId));
-            if (rule == null) {
+            Optional<Rule> rule = ruleService.findById(Integer.parseInt(statId));
+            if (rule.isEmpty()) {
                 return false;
             }
-            rules.add(rule);
+            rules.add(rule.get());
         }
         accident.setRules(rules);
-        accident.setType(accidentType);
+        accident.setType(accidentType.get());
         accidentRepository.save(accident);
         return true;
     }
 
     public boolean replace(Accident accident, String[] rIds, int typeId) {
-        AccidentType accidentType = accidentTypeService.findById(typeId);
-        if (accidentType == null) {
+        Optional<AccidentType> accidentType = accidentTypeService.findById(typeId);
+        if (accidentType.isEmpty()) {
             return false;
         }
         Set<Rule> rules = new HashSet<>();
         for (String statId : rIds) {
-            Rule rule = ruleService.findById(Integer.parseInt(statId));
-            if (rule == null) {
+            Optional<Rule> rule = ruleService.findById(Integer.parseInt(statId));
+            if (rule.isEmpty()) {
                 return false;
             }
-            rules.add(rule);
+            rules.add(rule.get());
         }
         accident.setRules(rules);
-        accident.setType(accidentType);
+        accident.setType(accidentType.get());
         accidentRepository.replace(accident);
         return true;
     }
 
-    public Accident findById(int id) {
+    public Optional<Accident> findById(int id) {
         return accidentRepository.findById(id);
     }
 

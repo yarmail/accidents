@@ -1,5 +1,6 @@
 package ru.job4j.accidents.controller;
 
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,18 +11,11 @@ import ru.job4j.accidents.service.AccidentTypeService;
 import ru.job4j.accidents.service.RuleService;
 
 @Controller
+@AllArgsConstructor
 public class AccidentController {
     private final AccidentService accidentService;
     private final AccidentTypeService accidentTypeService;
     private final RuleService ruleService;
-
-    public AccidentController(AccidentService accidentService,
-                              AccidentTypeService accidentTypeService,
-                              RuleService ruleService) {
-        this.accidentService = accidentService;
-        this.accidentTypeService = accidentTypeService;
-        this.ruleService = ruleService;
-    }
 
     @GetMapping("/")
     public String accidents(Model model) {
@@ -55,7 +49,10 @@ public class AccidentController {
 
     @GetMapping("/formUpdateAccident")
     public String viewUpdate(@RequestParam("id") int id, Model model) {
-        model.addAttribute("accident", accidentService.findById(id));
+        if (accidentService.findById(id).isEmpty()) {
+            return "error";
+        }
+        model.addAttribute("accident", accidentService.findById(id).get());
         model.addAttribute("types", accidentTypeService.findAll());
         model.addAttribute("rules", ruleService.findAll());
         return "editAccident";

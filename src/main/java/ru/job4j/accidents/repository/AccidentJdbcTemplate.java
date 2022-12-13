@@ -43,12 +43,12 @@ public class AccidentJdbcTemplate {
     public Accident save(Accident accident) {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName("accident")
-                .usingGeneratedKeyColumns("id");
+                .usingGeneratedKeyColumns("accident_id");
         Map<String, Object> params = new HashMap<>();
-        params.put("name", accident.getName());
-        params.put("text", accident.getText());
-        params.put("address", accident.getAddress());
-        params.put("type_id", accident.getType().getId());
+        params.put("accident_name", accident.getName());
+        params.put("accident_text", accident.getText());
+        params.put("accident_address", accident.getAddress());
+        params.put("accident_type_id", accident.getType().getId());
         int accId = (int) simpleJdbcInsert.executeAndReturnKey(params);
         accident.setId(accId);
         ruleJdbcTemplate.addAccidentId(accident.getRules(), accId);
@@ -61,9 +61,9 @@ public class AccidentJdbcTemplate {
         return accidents.size() > 0 ? new ArrayList<>(accidents) : new ArrayList<>();
     }
 
-    public Accident findById(int id) {
+    public Optional<Accident> findById(int id) {
         return jdbc.query(ACCIDENT_BY_ID, new AccidentExtractor(), id)
-                        .values().stream().findFirst().get();
+                        .values().stream().findFirst();
         }
 
     public void replace(Accident accident) {

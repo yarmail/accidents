@@ -3,19 +3,20 @@ package ru.job4j.accidents.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Rule;
-import ru.job4j.accidents.repository.RuleMem;
+import ru.job4j.accidents.repository.RuleJdbcTemplate;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class RuleService {
-    private final RuleMem ruleMem;
+    private final RuleJdbcTemplate ruleJdbcTemplate;
 
     public Collection<Rule> findAll() {
-        return ruleMem.findAll();
+        return ruleJdbcTemplate.findAll();
     }
 
-    public Rule findById(int id) {
-        return ruleMem.finById(id);
+    public Optional<Rule> findById(int id) {
+        return ruleJdbcTemplate.findById(id);
     }
 }
