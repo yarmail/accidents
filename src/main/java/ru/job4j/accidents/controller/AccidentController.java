@@ -10,6 +10,8 @@ import ru.job4j.accidents.service.AccidentService;
 import ru.job4j.accidents.service.AccidentTypeService;
 import ru.job4j.accidents.service.RuleService;
 
+import java.util.Optional;
+
 @Controller
 @AllArgsConstructor
 public class AccidentController {
@@ -49,10 +51,11 @@ public class AccidentController {
 
     @GetMapping("/formUpdateAccident")
     public String viewUpdate(@RequestParam("id") int id, Model model) {
-        if (accidentService.findById(id).isEmpty()) {
+        Optional<Accident> accident = accidentService.findById(id);
+        if (accident.isEmpty()) {
             return "error";
         }
-        model.addAttribute("accident", accidentService.findById(id).get());
+        model.addAttribute("accident", accident.get());
         model.addAttribute("types", accidentTypeService.findAll());
         model.addAttribute("rules", ruleService.findAll());
         return "editAccident";
