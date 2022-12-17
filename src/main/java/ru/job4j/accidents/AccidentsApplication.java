@@ -10,5 +10,4 @@ public class AccidentsApplication {
 		SpringApplication.run(AccidentsApplication.class, args);
 		System.out.println("Go to http://localhost:8080/");
 	}
-
 }

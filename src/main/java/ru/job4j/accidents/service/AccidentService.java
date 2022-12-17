@@ -21,6 +21,8 @@ public class AccidentService {
     /**
      * rIds - список статей
      * typeId - id типа происшествия
+     *
+     * може быть save, add или create
      */
     public boolean save(Accident accident, String[] rIds, int typeId) {
         Optional<AccidentType> accidentType = accidentTypeService.findById(typeId);
