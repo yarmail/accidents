@@ -5,18 +5,17 @@ import org.springframework.stereotype.Service;
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.model.Rule;
-import ru.job4j.accidents.repository.AccidentJdbcTemplate;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import ru.job4j.accidents.repository.AccidentHibernate;
+
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class AccidentService {
-    private final AccidentJdbcTemplate accidentRepository;
+    /*private final AccidentJdbcTemplate accidentRepository;*/
     private final RuleService ruleService;
     private final AccidentTypeService accidentTypeService;
+    private final AccidentHibernate accidentHibernate;
 
     /**
      * rIds - список статей
@@ -39,7 +38,7 @@ public class AccidentService {
         }
         accident.setRules(rules);
         accident.setType(accidentType.get());
-        accidentRepository.save(accident);
+        accidentHibernate.save(accident);
         return true;
     }
 
@@ -58,15 +57,15 @@ public class AccidentService {
         }
         accident.setRules(rules);
         accident.setType(accidentType.get());
-        accidentRepository.replace(accident);
+        accidentHibernate.replace(accident);
         return true;
     }
 
     public Optional<Accident> findById(int id) {
-        return accidentRepository.findById(id);
+        return accidentHibernate.findById(id);
     }
 
-    public Collection<Accident> findAll() {
-        return accidentRepository.findAll();
+    public List<Accident> findAll() {
+        return accidentHibernate.findAll();
     }
 }
