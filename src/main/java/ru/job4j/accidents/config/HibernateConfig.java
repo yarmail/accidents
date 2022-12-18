@@ -25,7 +25,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory(@Value("${hibernate.dialect}") String dialect, DataSource ds) {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(ds);
-        sessionFactory.setPackagesToScan("ru.job4j.accident.model");
+        sessionFactory.setPackagesToScan("ru.job4j.accidents.model");
         Properties cfg = new Properties();
         cfg.setProperty("hibernate.dialect", dialect);
         sessionFactory.setHibernateProperties(cfg);
