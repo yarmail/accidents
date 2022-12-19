@@ -13,6 +13,11 @@ import java.util.Optional;
 @AllArgsConstructor
 public class AccidentHibernate {
     private final SessionFactory sf;
+    private static final String ALL_ACCIDENTS = """
+        SELECT a FROM Accident a
+        JOIN FETCH a.type
+        JOIN a.rules 
+    """;
 
     public Optional<Accident> findById(int id) {
         try (Session session = sf.openSession()) {
@@ -26,8 +31,8 @@ public class AccidentHibernate {
     public List<Accident> findAll() {
         try (Session session = sf.openSession()) {
             session.beginTransaction();
-            List<Accident> accidents = session.createQuery("FROM Accident").getResultList();
-            accidents.forEach(System.out::println);
+            List<Accident> accidents =
+                    session.createQuery(ALL_ACCIDENTS).getResultList();
             session.getTransaction().commit();
             return accidents;
         }
@@ -36,9 +41,9 @@ public class AccidentHibernate {
     public int save(Accident accident) {
        try (Session session = sf.openSession()) {
            session.beginTransaction();
-           session.save(accident);
+           int id = (int) session.save(accident);
            session.getTransaction().commit();
-           return accident.getId();
+           return id;
        }
     }
 

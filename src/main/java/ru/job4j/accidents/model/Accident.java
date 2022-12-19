@@ -2,6 +2,7 @@ package ru.job4j.accidents.model;
 
 import lombok.*;
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -34,11 +35,11 @@ public class Accident {
     @Column(name = "accident_address")
     private String address;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "accident_type_id", referencedColumnName = "type_id")
     private AccidentType type;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(name = "accident_rule",
                 joinColumns = @JoinColumn(name = "accident_id"),
                 inverseJoinColumns = @JoinColumn(name = "rule_id"))
