@@ -16,15 +16,23 @@ public class AccidentHibernate {
     private static final String ALL_ACCIDENTS = """
         SELECT a FROM Accident a
         JOIN FETCH a.type
-        JOIN a.rules 
+        JOIN FETCH a.rules 
+    """;
+
+    private static final String ONE_ACCIDENT = """
+        SELECT a FROM Accident a
+        JOIN FETCH a.type
+        JOIN FETCH a.rules
+        WHERE a.id = :fId 
     """;
 
     public Optional<Accident> findById(int id) {
         try (Session session = sf.openSession()) {
             session.beginTransaction();
-            Accident accident = session.get(Accident.class, id);
+            Optional<Accident> accident = session.createQuery(ONE_ACCIDENT)
+                .setParameter("fId", id).uniqueResultOptional();
             session.getTransaction().commit();
-            return Optional.ofNullable(accident);
+            return accident;
         }
     }
 
