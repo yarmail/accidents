@@ -2,7 +2,6 @@ package ru.job4j.accidents.model;
 
 import lombok.*;
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -18,6 +17,8 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
+@NamedEntityGraph(attributeNodes = {@NamedAttributeNode("type"),
+                                    @NamedAttributeNode("rules")})
 @Table(name = "accident")
 public class Accident {
     @EqualsAndHashCode.Include
@@ -35,11 +36,11 @@ public class Accident {
     @Column(name = "accident_address")
     private String address;
 
-    @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "accident_type_id", referencedColumnName = "type_id")
     private AccidentType type;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "accident_rule",
                 joinColumns = @JoinColumn(name = "accident_id"),
                 inverseJoinColumns = @JoinColumn(name = "rule_id"))
