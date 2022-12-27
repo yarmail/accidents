@@ -6,7 +6,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import javax.sql.DataSource;
 
 /**
  * configure(Auth...
@@ -20,18 +22,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    DataSource ds;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .passwordEncoder(passwordEncoder)
-                .withUser("user")
-                .password(passwordEncoder.encode("123456")).roles("USER")
-                .and()
-                .withUser("admin")
-                .password(passwordEncoder.encode("123456")).roles("USER", "ADMIN");
+        auth.jdbcAuthentication()
+                .dataSource(ds)
+                .withUser(User.withUsername("user")
+                        .password(passwordEncoder.encode("123456"))
+                        .roles("USER"));
     }
 
     @Override
@@ -76,8 +79,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 .failureUrl("/login?error=true")
 .permitAll()
 
+Конфигурация без БД
+configure(Auth)
+        auth.inMemoryAuthentication()
+                .passwordEncoder(passwordEncoder)
+                .withUser("user")
+                .password(passwordEncoder.encode("123456")).roles("USER")
+                .and()
+                .withUser("admin")
+                .password(passwordEncoder.encode("123456")).roles("USER", "ADMIN");
 
-
-
+Конфигурация с БД
+(По умолчанию мы добавляем пользователя user с паролем 123456)
+        auth.jdbcAuthentication()
+                .dataSource(ds)
+                .withUser(User.withUsername("user")
+                        .password(passwordEncoder.encode("123456"))
+                        .roles("USER"));
+ВНИМАНИЕ
+При каждом вызове программы в таблицу загоняется пользователь
+по умолчанию со своим паролем
+При повторном вызове программы нужно удалять эту запись,
+т.к. она повторяется и мешает.
 
  */
