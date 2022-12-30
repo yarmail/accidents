@@ -16,6 +16,8 @@
     <include file="db/006_dml _insert_into_accident.sql" relativeToChangelogFile="true"/>
     <include file="db/007_ddl_create_accident_rule.sql" relativeToChangelogFile="true"/>
     <include file="db/008_dml_insert_into_accident_rule.sql" relativeToChangelogFile="true"/>
-    <include file="db/009_ddl_create_users.sql" relativeToChangelogFile="true"/>
-    <include file="db/010_ddl_create_authorities.sql" relativeToChangelogFile="true"/>
+    <include file="db/009_ddl_create_authorities.sql" relativeToChangelogFile="true"/>
+    <include file="db/010_ddl_create_users.sql" relativeToChangelogFile="true"/>
+    <include file="db/011_dml_insert_into_authorities.sql" relativeToChangelogFile="true"/>
+    <include file="db/012_dml_insert_into_users.sql" relativeToChangelogFile="true"/>
 </databaseChangeLog>

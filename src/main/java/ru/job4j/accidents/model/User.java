@@ -13,6 +13,10 @@ import javax.persistence.*;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private int id;
+
     @Column(name = "username")
     private String username;
 
@@ -22,6 +26,7 @@ public class User {
     @Column(name = "enabled")
     private boolean enabled;
 
-    @OneToOne(mappedBy = "user")
+    @ManyToOne
+    @JoinColumn(name = "authority_id")
     private Authority authority;
 }

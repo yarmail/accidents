@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация</title>
+    <th:block th:include="blocks/css :: head"/>
+</head>
+<body>
+<div class="container py-3">
+    <th:block th:include="blocks/navbutton :: div"/>
+    <main class="form-signin">
+        <h1 class="h3 mb-3 fw-normal">Регистрация</h1>
+
+        <form th:action="@{/reg}" method="post">
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" id="username" name="username">
+                <label for="username">User name</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" name="password">
+                <label for="password">Password</label>
+            </div>
+            <hr class="my-4">
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Сохранить</button>
+        </form>
+
+    </main>
+
+</div>
+</body>
+</html>
