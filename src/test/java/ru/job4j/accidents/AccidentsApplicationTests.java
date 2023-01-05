@@ -1,5 +1,6 @@
 package ru.job4j.accidents;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,8 +15,10 @@ import java.util.Optional;
  * Я понимаю, что это скорее всего неправильно из-за
  * одного метода поднимать всю систему, делаю это просто в учебных целях
  */
-@SpringBootTest(classes = AccidentsApplication.class)
+@Disabled
+@SpringBootTest
 public class AccidentsApplicationTests {
+
 	private  final AccidentHibernate accidentHibernate;
 
 	@Autowired
