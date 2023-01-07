@@ -23,7 +23,7 @@
 		<profile>
 			<id>test</id>
 			<properties>
-				<liquibase.config>src/main/resources/db_test.properties</liquibase.config>
+				<liquibase.config>src/test/resources/application.properties</liquibase.config>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
@@ -75,7 +75,6 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>1.4.200</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
