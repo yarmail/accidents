@@ -17,7 +17,8 @@ import javax.sql.DataSource;
  * Метод ds загружает пул соединений.
  * Метод jdbc создает обертку для работы с базой.
  */
-@Configuration
+
+/*@Configuration
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
 public class JdbcConfig {
@@ -39,5 +40,4 @@ public class JdbcConfig {
     public JdbcTemplate jdbc(DataSource ds) {
         return new JdbcTemplate(ds);
     }
-
-}
+}*/

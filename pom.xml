@@ -23,14 +23,14 @@
 		<profile>
 			<id>test</id>
 			<properties>
-				<liquibase.config>src/test/resources/application.properties</liquibase.config>
+				<liquibase.config>src/test/resources/db-test.properties</liquibase.config>
 			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
 		</profile>
 		<profile>
-			<id>production</id>
+			<id>prod</id>
 			<properties>
 				<liquibase.config>src/main/resources/db.properties</liquibase.config>
 			</properties>
