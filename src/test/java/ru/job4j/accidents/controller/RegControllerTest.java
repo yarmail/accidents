@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-class RegControllerTest {
+public class RegControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -30,3 +30,25 @@ class RegControllerTest {
                 .andExpect(view().name("reg"));
     }
 }
+
+/*
+Если бы был User сервис можно было бы добавить
+
+    @MockBean
+    private UserService userService;
+
+    @Test
+    @WithMockUser
+    public void whenRegUserThenReturnDefaultMessage() throws Exception {
+        this.mockMvc.perform(post("/reg")
+                        .param("username", "Name")
+                        .param("password", "123456"))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/login"));
+        ArgumentCaptor<User> argument = ArgumentCaptor.forClass(User.class);
+        verify(userService).create(argument.capture());
+        assertThat(argument.getValue().getUsername()).isEqualTo("Name");
+    }
+
+*/
